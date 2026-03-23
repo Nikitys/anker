@@ -6,7 +6,7 @@ import RequestForm from '../components/RequestForm.vue'
 <template>
   <div class="page-top">
     <div class="container">
-      <h1>О компании</h1>
+      <h1>О компаниии</h1>
       <p>Инжиниринговая компания, специализирующаяся на проектировании и поставке анкерных систем для геотехнических работ в России.</p>
     </div>
   </div>
