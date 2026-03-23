@@ -8,6 +8,9 @@ const servicesOpen = ref(false)
 const appsOpen = ref(false)
 const isMobile = useMediaQuery('(max-width: 768px)')
 
+let closeServicesTimer = null
+let closeAppsTimer = null
+
 function closeMenu() {
   menuOpen.value = false
   servicesOpen.value = false
@@ -21,6 +24,28 @@ function toggleDropdown(which) {
   } else {
     appsOpen.value = !appsOpen.value
     servicesOpen.value = false
+  }
+}
+
+function openDropdown(which) {
+  if (isMobile.value) return
+  if (which === 'services') {
+    clearTimeout(closeServicesTimer)
+    servicesOpen.value = true
+    appsOpen.value = false
+  } else {
+    clearTimeout(closeAppsTimer)
+    appsOpen.value = true
+    servicesOpen.value = false
+  }
+}
+
+function closeDropdown(which) {
+  if (isMobile.value) return
+  if (which === 'services') {
+    closeServicesTimer = setTimeout(() => { servicesOpen.value = false }, 150)
+  } else {
+    closeAppsTimer = setTimeout(() => { appsOpen.value = false }, 150)
   }
 }
 </script>
@@ -38,7 +63,7 @@ function toggleDropdown(which) {
       </router-link>
 
       <nav class="nav" :class="{ open: menuOpen }">
-        <div class="nav-item dropdown" @mouseenter="!isMobile && (servicesOpen = true)" @mouseleave="!isMobile && (servicesOpen = false)">
+        <div class="nav-item dropdown" @mouseenter="openDropdown('services')" @mouseleave="closeDropdown('services')">
           <span class="nav-link" @click="isMobile && toggleDropdown('services')">Услуги <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></span>
           <div class="dropdown-menu" v-show="servicesOpen">
             <router-link to="/services/proektirovanie" @click="closeMenu">Проектирование</router-link>
@@ -48,7 +73,7 @@ function toggleDropdown(which) {
           </div>
         </div>
         <router-link to="/catalog" class="nav-link" @click="closeMenu">Каталог</router-link>
-        <div class="nav-item dropdown" @mouseenter="!isMobile && (appsOpen = true)" @mouseleave="!isMobile && (appsOpen = false)">
+        <div class="nav-item dropdown" @mouseenter="openDropdown('apps')" @mouseleave="closeDropdown('apps')">
           <span class="nav-link" @click="isMobile && toggleDropdown('apps')">Применение <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></span>
           <div class="dropdown-menu" v-show="appsOpen">
             <router-link v-for="app in applications" :key="app.id" :to="`/applications/${app.slug}`" @click="closeMenu">{{ app.name }}</router-link>
@@ -123,9 +148,17 @@ function toggleDropdown(which) {
   color: var(--color-primary);
 }
 .nav-item { position: relative; }
+.dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
+}
 .dropdown-menu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
   background: #fff;
   border-radius: var(--radius);
