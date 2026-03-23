@@ -196,6 +196,7 @@ function toggleDropdown(which) {
     padding: 24px;
     gap: 8px;
     overflow-y: auto;
+    height: fit-content;
   }
   .nav.open { display: flex; }
   .nav-item { width: 100%; }
